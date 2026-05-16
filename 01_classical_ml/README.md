@@ -7,11 +7,43 @@
 ### Logistic Regression
 A linear model on the log-odds of the positive class:
 
-$$\log\frac{P(y=1\mid x)}{P(y=0\mid x)} = w^\top x + b, \qquad P(y=1\mid x) = \sigma(w^\top x + b) = \frac{1}{1 + e^{-(w^\top x + b)}}$$
+$$\log\frac{P(y=1\mid x)}{P(y=0\mid x)} = w^\top x + b$$
+
+Solving for the probability gives the equivalent **sigmoid form**:
+
+$$P(y=1\mid x) = \sigma(w^\top x + b) = \frac{1}{1 + e^{-(w^\top x + b)}}$$
+
+<details>
+<summary><b>Derivation — from log-odds to sigmoid</b></summary>
+
+Let $p = P(y=1\mid x)$ and $z = w^\top x + b$. Since the two classes sum to 1, $P(y=0\mid x) = 1 - p$, so the log-odds equation becomes $\log\frac{p}{1 - p} = z$. Exponentiate: $\frac{p}{1 - p} = e^{z}$. Clear the denominator and collect: $p\,(1 + e^{z}) = e^{z}$. Divide, then multiply top and bottom by $e^{-z}$:
+
+$$p = \frac{e^{z}}{1 + e^{z}} = \frac{1}{1 + e^{-z}} = \sigma(z)$$
+
+The two formulas are the same statement — one written as a **log-odds linear model** (each $w_j$ is the change in log-odds per unit of $x_j$, natural for interpretation), the other as a **probability** (natural for prediction and for plugging into the cross-entropy loss below).
+
+</details>
 
 Trained by maximizing log-likelihood (equivalently, minimizing cross-entropy):
 
 $$\mathcal{L}(w, b) = -\frac{1}{N}\sum_{i=1}^{N} \big[\, y_i \log \hat{p}_i + (1 - y_i)\log(1 - \hat{p}_i) \,\big]$$
+
+<details>
+<summary><b>Derivation — where this loss comes from</b></summary>
+
+Treat each label as a Bernoulli draw with parameter $\hat{p}_i = \sigma(w^\top x_i + b)$, so $P(y_i \mid x_i) = \hat{p}_i^{\,y_i}(1 - \hat{p}_i)^{\,1 - y_i}$. The i.i.d. likelihood over the dataset is
+
+$$L(w, b) = \prod_{i=1}^{N} \hat{p}_i^{\,y_i}(1 - \hat{p}_i)^{\,1 - y_i}$$
+
+Taking the log turns the product into a numerically stable sum; flipping the sign converts *maximize log-likelihood* into *minimize a loss*; dividing by $N$ keeps the gradient scale independent of dataset size. The result is the formula above.
+
+**Why "cross-entropy"?** For each sample, the per-term inside the brackets is exactly the cross-entropy $H(p, q) = -\sum_k p_k \log q_k$ between the true one-hot $(y_i, 1 - y_i)$ and the predicted $(\hat{p}_i, 1 - \hat{p}_i)$. Averaging over the dataset gives mean cross-entropy.
+
+**Two sanity checks**
+- Perfect predictions ($\hat{p}_i = y_i$) give per-sample loss $1 \cdot \log 1 = 0$, so $\mathcal{L} = 0$.
+- A confident wrong prediction ($\hat{p}_i \to 0$ when $y_i = 1$) drives $-\log \hat{p}_i \to \infty$ — which is why production code always clips probabilities away from $\{0, 1\}$ before passing them into a log loss.
+
+</details>
 
 **Pros**
 - Cheap to train and serve, fully interpretable (coefficients = log-odds contributions).
