@@ -5,7 +5,13 @@
 ## Concepts
 
 ### Logistic Regression
-A linear model on the log-odds of the positive class. Trained by maximizing log-likelihood (equivalently, minimizing cross-entropy).
+A linear model on the log-odds of the positive class:
+
+$$\log\frac{P(y=1\mid x)}{P(y=0\mid x)} = w^\top x + b, \qquad P(y=1\mid x) = \sigma(w^\top x + b) = \frac{1}{1 + e^{-(w^\top x + b)}}$$
+
+Trained by maximizing log-likelihood (equivalently, minimizing cross-entropy):
+
+$$\mathcal{L}(w, b) = -\frac{1}{N}\sum_{i=1}^{N} \big[\, y_i \log \hat{p}_i + (1 - y_i)\log(1 - \hat{p}_i) \,\big]$$
 
 **Pros**
 - Cheap to train and serve, fully interpretable (coefficients = log-odds contributions).
