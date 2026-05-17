@@ -62,6 +62,7 @@ For text / image content (KYC documents, selfies, support tickets), starting fro
 | [`01_cross_validation_and_metrics.ipynb`](./01_cross_validation_and_metrics.ipynb) | Stratified K-Fold vs Group K-Fold vs Time Series Split on the same dataset. See how each shifts the score. |
 | [`02_embeddings_for_categorical.ipynb`](./02_embeddings_for_categorical.ipynb) | Learned embeddings for `country` and `device_type` in a small PyTorch model, contrasted with one-hot encoding. |
 | [`feature_importance.py`](./feature_importance.py) | Permutation importance — model-agnostic, more reliable than gain-based importance. |
+| [`papers/`](./papers/) | Annotated bibliography of 9 arXiv papers on Transformer / LLM use in fraud detection — surveys, methodological critique, and empirical models, with usage / strengths / weaknesses per paper. |
 
 ## Likely interview questions
 
